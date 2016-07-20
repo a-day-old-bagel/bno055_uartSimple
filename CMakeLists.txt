@@ -19,9 +19,13 @@ endif()
 set( LIBS         ${LIBS}         )
 set( INCLUDE_DIRS ${INCLUDE_DIRS} )
 set( SOURCE_FILES ${SOURCE_FILES}
+        bno055DataSheet.h
         Bno055Interface.cpp
         Bno055Interface.h
-        bno055Enum.h)
+        main.cpp
+        UartInterface.cpp
+        UartInterface.h
+        )
 
 # Build
 include_directories( ${INCLUDE_DIRS} )
