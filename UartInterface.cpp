@@ -33,7 +33,7 @@ namespace bno055 {
          * 	When set and path identifies a terminal device, open() shall not cause the terminal device to become the
          * 	controlling terminal for the process.
          */
-        uartFile = open(deviceFile, O_RDWR | O_NOCTTY | O_NDELAY);		//Open in non blocking read/sendData mode
+        uartFile = open(deviceFile, O_RDWR | O_NOCTTY | O_SYNC);		//Open in synchronous mode
         if (uartFile == -1) {
             return false;
         }
@@ -60,7 +60,7 @@ namespace bno055 {
         options.c_iflag = IGNPAR;
         options.c_oflag = 0;
         options.c_lflag = 0;
-        tcflush(uartFile, TCIFLUSH);
+        tcflush(uartFile, TCIOFLUSH);
         tcsetattr(uartFile, TCSANOW, &options);
 
         return true;
