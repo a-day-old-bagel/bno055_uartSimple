@@ -57,8 +57,15 @@ namespace bno055 {
     bool Bno055Interface::write(uint8_t regAddr, uint8_t length, uint8_t* data) {
         RegisterWritePacket packetToSend(regAddr, length, data);
         ReceivedAck ack;
+        int loopWaitTime = 2000; // microseconds
+        int loopCounter = 0;
         do {
             uart.sendData(packetToSend.bytes(), packetToSend.length);
+            usleep(2000); // 2 ms
+            if (++loopCounter >= 1000000 / loopWaitTime) {
+                loopCounter = 0;
+                std::cout << "Waiting for response...";
+            }
         } while (ack.readFrom(uart) != RECEIVED_EXPECTED || ! ack.isValidAck() || ack.isErrorStatus());
         std::cout << "ack received.\n";
         return (ack.isValidAck() && ! ack.isErrorStatus());
