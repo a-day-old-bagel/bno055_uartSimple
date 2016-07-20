@@ -58,8 +58,12 @@ namespace bno055 {
         RegisterWritePacket packetToSend(regAddr, length, data);
         uart.sendData(packetToSend.bytes(), packetToSend.length);
         ReceivedAck ack;
-        if (ack.readFrom(uart) == RECEIVED_EXPECTED) {
-            std::cout << "Did not receive ack!\n";
+        int loopCount = 0;
+        while (ack.readFrom(uart) != RECEIVED_EXPECTED) {
+            if (++loopCount > 100) {
+                std::cout << "ack reception timed out!";
+                return false;
+            }
         }
         return (ack.isValidAck() && ! ack.isErrorStatus());
     }
