@@ -61,10 +61,11 @@ namespace bno055 {
         int loopCount = 0;
         while (ack.readFrom(uart) != RECEIVED_EXPECTED) {
             if (++loopCount > 100) {
-                std::cout << "ack reception timed out!";
+                std::cout << "ack reception timed out!\n";
                 return false;
             }
         }
+        std::cout << "ack received.\n";
         return (ack.isValidAck() && ! ack.isErrorStatus());
     }
 
