@@ -59,7 +59,7 @@ namespace bno055 {
         ReceivedAck ack;
         do {
             uart.sendData(packetToSend.bytes(), packetToSend.length);
-        } while (ack.readFrom(uart) != RECEIVED_EXPECTED && ack.isValidAck() && ! ack.isErrorStatus());
+        } while (ack.readFrom(uart) != RECEIVED_EXPECTED || ! ack.isValidAck() || ack.isErrorStatus());
         std::cout << "ack received.\n";
         return (ack.isValidAck() && ! ack.isErrorStatus());
     }
