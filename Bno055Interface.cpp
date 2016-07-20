@@ -58,8 +58,10 @@ namespace bno055 {
         RegisterWritePacket packetToSend(regAddr, length, data);
         uart.sendData(packetToSend.bytes(), packetToSend.length);
         ReceivedAck ack;
-        ack.readFrom(uart);
-        return (ack.isValidAck() && !ack.isErrorStatus());
+        if (ack.readFrom(uart) == RECEIVED_EXPECTED) {
+            std::cout << "Did not receive ack!\n";
+        }
+        return (ack.isValidAck() && ! ack.isErrorStatus());
     }
 
     bool Bno055Interface::writeByte(uint8_t regAddr, uint8_t data) {
