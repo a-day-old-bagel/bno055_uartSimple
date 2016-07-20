@@ -12,11 +12,14 @@ int main() {
     Bno055Interface bno055;
     bno055.init(BNO055_DEVICE_FILE);
     if (bno055.isLive()) {
-        printf("WORKED!!!\n");
+        printf("BNO055 is live.\n");
     } else {
-        printf("FAILED!!!\n");
+        printf("Could not contact BNO055!\n");
+        return 1;
     }
-    fflush(stdout);
+
+
+
     return 0;
 }
 

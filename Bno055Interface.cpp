@@ -66,9 +66,8 @@ namespace bno055 {
                 loopCounter = 0;
                 std::cout << "Waiting for response...";
             }
-        } while (ack.readFrom(uart) != RECEIVED_EXPECTED || ! ack.isValidAck() || ack.isErrorStatus());
-        std::cout << "ack received.\n";
-        return (ack.isValidAck() && ! ack.isErrorStatus());
+        } while (ack.readFrom(uart) != RECEIVED_EXPECTED || ack.isErrorStatus());
+        return true;
     }
 
     bool Bno055Interface::writeByte(uint8_t regAddr, uint8_t data) {
