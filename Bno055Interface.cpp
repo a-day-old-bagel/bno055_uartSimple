@@ -7,7 +7,7 @@
 #include "Bno055Interface.h"
 
 #define RESPONSE_WAIT_WRITE 2000
-#define RESPONSE_WAIT_READ  2000
+#define RESPONSE_WAIT_READ  10000
 
 namespace bno055 {
 
@@ -92,7 +92,7 @@ namespace bno055 {
                 break;
             } else if (receivedExpected == RECEIVED_ACK) {
                 std::cout << "Read request failed!\n";
-                break;
+                return false;
             }
         } while(true);
         ImuData* imuData = (ImuData*)&dataReceived.data;
