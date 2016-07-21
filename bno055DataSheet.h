@@ -275,7 +275,9 @@ namespace bno055 {
     };
 
     struct RegisterReadPacket : public OutboundPacket {
-        RegisterReadPacket(uint8_t regAddr, uint8_t length) : OutboundPacket(regAddr, length, RECV_READ_HEADER_BYTE) { }
+        uint8_t length = 0;
+        RegisterReadPacket(uint8_t regAddr, uint8_t length)
+                : OutboundPacket(regAddr, length, RECV_READ_HEADER_BYTE), length(length + sizeof(OutboundPacket)) { }
     };
 
     struct ReceivedRead {

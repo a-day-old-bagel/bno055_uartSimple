@@ -18,6 +18,7 @@ namespace bno055 {
     public:
         bool init(const char* bno055File);
         bool isLive();
+        bool updateImuData(ImuData* out);
     };
 }
 

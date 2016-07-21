@@ -2,7 +2,9 @@
 // Created by volundr on 7/19/16.
 //
 
+#include <iostream>
 #include "Bno055Interface.h"
+#include "bno055DataSheet.h"
 
 #define BNO055_DEVICE_FILE "/dev/ttyS0"
 
@@ -12,13 +14,18 @@ int main() {
     Bno055Interface bno055;
     bno055.init(BNO055_DEVICE_FILE);
     if (bno055.isLive()) {
-        printf("BNO055 is live.\n");
+        std::cout << "BNO055 is live.\n";
     } else {
-        printf("Could not contact BNO055!\n");
+        std::cout << "Could not contact BNO055!\n";
         return 1;
     }
 
+    ImuData imuData;
+    while(bno055.updateImuData(&imuData)) {
+        std::cout << imuData.names.accX << std::endl;
+    }
 
+    std::cout << "Data gathering halted, exiting!\n";
 
     return 0;
 }

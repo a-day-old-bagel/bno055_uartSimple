@@ -6,6 +6,9 @@
 #include <iostream>
 #include "Bno055Interface.h"
 
+#define RESPONSE_WAIT_WRITE 2000
+#define RESPONSE_WAIT_READ  2000
+
 namespace bno055 {
 
     bool Bno055Interface::init(const char* bno055File) {
@@ -57,20 +60,43 @@ namespace bno055 {
     bool Bno055Interface::write(uint8_t regAddr, uint8_t length, uint8_t* data) {
         RegisterWritePacket packetToSend(regAddr, length, data);
         ReceivedAck ack;
-        int loopWaitTime = 1000; // microseconds
+        int responseWait = RESPONSE_WAIT_WRITE; // microseconds
         int loopCounter = 0;
         do {
             uart.sendData(packetToSend.bytes(), packetToSend.length);
-            usleep(2000); // 2 ms
-            if (++loopCounter >= 1000000 / loopWaitTime) {
+            usleep(responseWait); // 2 ms
+            // If stuck in this while loop for an entire second, print a message and reset counter.
+            if (++loopCounter >= 1000000 / responseWait) {
                 loopCounter = 0;
-                std::cout << "Waiting for response...";
+                std::cout << "Waiting for write response...";
             }
-//            if (loopCounter++) {
-//                loopCounter = 0;
-//                std::cout << "Resending data...\n";
-//            }
         } while (ack.readFrom(uart) != RECEIVED_EXPECTED || ack.isErrorStatus());
+        return true;
+    }
+
+    bool Bno055Interface::updateImuData(ImuData* out) {
+        RegisterReadPacket readRequestPacket(ACC_DATA_X_LSB, 46);
+        ReceivedRead dataReceived;
+        int responseWait = RESPONSE_WAIT_READ; // microseconds
+        int loopCounter = 0;
+        do {
+            uart.sendData(readRequestPacket.bytes(), readRequestPacket.length);
+            usleep(responseWait); // 2 ms
+            // If stuck in this while loop for an entire second, print a message and reset counter.
+            if (++loopCounter >= 1000000 / responseWait) {
+                loopCounter = 0;
+                std::cout << "Waiting for read response...\n";
+            }
+            int receivedExpected = dataReceived.readFrom(uart);
+            if (receivedExpected == RECEIVED_EXPECTED) {
+                break;
+            } else if (receivedExpected == RECEIVED_ACK) {
+                std::cout << "Read request failed!\n";
+                break;
+            }
+        } while(true);
+        ImuData* imuData = (ImuData*)&dataReceived.data;
+        *out = *imuData;
         return true;
     }
 
@@ -81,7 +107,5 @@ namespace bno055 {
     bool Bno055Interface::isLive() {
         return hasInit;
     }
-
-
 }
 
