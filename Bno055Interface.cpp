@@ -92,7 +92,7 @@ namespace bno055 {
                 break;
             } else if (receivedExpected == RECEIVED_ACK) {
                 std::cout << "Read request failed: " << (uint32_t)dataReceived.response << " " << (uint32_t)dataReceived.getAck() << std::endl;
-                return false;
+//                return false;
             }
         } while(true);
         ImuData* imuData = (ImuData*)&dataReceived.data;
