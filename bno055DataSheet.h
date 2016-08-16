@@ -321,8 +321,8 @@ namespace bno055 {
         bool isActuallyAnAck() {
             return response == RECV_ACK_HEADER_BYTE;
         }
-        std::string getAck() {
-            return ackToString(length);
+        uint8_t getAck() {
+            return length;
         }
     };
 
