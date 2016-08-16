@@ -214,7 +214,7 @@ namespace bno055 {
             EMIT_CASE_ERROR_ENUM(MIN_LENGTH_ERROR);
             EMIT_CASE_ERROR_ENUM(RECEIVE_CHARACTER_TIMEOUT);
             default:
-                return "Unknown Error";
+                return std::to_string(err);
         }
     }
     #undef EMIT_CASE_ERROR_ENUM
