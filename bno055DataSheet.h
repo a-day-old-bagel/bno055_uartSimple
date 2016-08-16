@@ -199,6 +199,25 @@ namespace bno055 {
         RECEIVE_CHARACTER_TIMEOUT,
     };
 
+    #define EMIT_CASE_ERROR_ENUM(e) case ##e: return #e
+    static std::string ackToString(int err) {
+        switch (err) {
+            EMIT_CASE_ERROR_ENUM(WRITE_SUCCESS);
+            EMIT_CASE_ERROR_ENUM(READ_FAIL);
+            EMIT_CASE_ERROR_ENUM(WRITE_FAIL);
+            EMIT_CASE_ERROR_ENUM(REGMAP_INVALID_ADDRESS);
+            EMIT_CASE_ERROR_ENUM(REGMAP_WRITE_DISABLED);
+            EMIT_CASE_ERROR_ENUM(WRONG_START_BYTE);
+            EMIT_CASE_ERROR_ENUM(BUS_OVER_RUN_ERROR);
+            EMIT_CASE_ERROR_ENUM(MAX_LENGTH_ERROR);
+            EMIT_CASE_ERROR_ENUM(MIN_LENGTH_ERROR);
+            EMIT_CASE_ERROR_ENUM(RECEIVE_CHARACTER_TIMEOUT);
+            default:
+                return "Unknown Error";
+        }
+    }
+    #undef EMIT_CASE_ERROR_ENUM
+
     enum ReceptionStatus {
         RECEIVED_EXPECTED,
         RECEIVED_ACK,
@@ -301,6 +320,9 @@ namespace bno055 {
         }
         bool isActuallyAnAck() {
             return response == RECV_ACK_HEADER_BYTE;
+        }
+        std::string getAck() {
+            return ackToString(length);
         }
     };
 
