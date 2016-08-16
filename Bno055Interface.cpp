@@ -7,7 +7,7 @@
 #include "Bno055Interface.h"
 
 #define RESPONSE_WAIT_WRITE 2000
-#define RESPONSE_WAIT_READ  10000
+#define RESPONSE_WAIT_READ  50000
 
 namespace bno055 {
 
