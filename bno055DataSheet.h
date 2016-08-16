@@ -258,13 +258,15 @@ namespace bno055 {
     };
 
     union OutboundPacketHeader {
-        struct {
-            uint8_t start;
-            uint8_t readOrWrite;
-            uint8_t regAddr;
-            uint8_t length;
-        } names;
-        uint8_t index[4];
+        union {
+            struct {
+                uint8_t start;
+                uint8_t readOrWrite;
+                uint8_t regAddr;
+                uint8_t length;
+            } names;
+            uint8_t index[4];
+        };
         OutboundPacketHeader(uint8_t regAddr, uint8_t length, uint8_t readOrWrite) {
             names.start         = SEND_START_HEADER_BYTE;
             names.readOrWrite   = readOrWrite;
