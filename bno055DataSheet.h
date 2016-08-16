@@ -287,7 +287,8 @@ namespace bno055 {
         std::string toString() {
             std::stringstream ss;
             uint8_t* myBytes = bytes();
-            for (int i = 0; i < header.names.length; ++i) {
+            int realLength = header.names.readOrWrite == SEND_WRITE_HEADER_BYTE ? 4 : header.names.length;
+            for (int i = 0; i < realLength; ++i) {
                 ss << (uint32_t)myBytes[i] << " ";
             }
             return ss.str();
@@ -307,7 +308,7 @@ namespace bno055 {
     struct RegisterReadPacket : public OutboundPacket {
         uint8_t length = 0;
         RegisterReadPacket(uint8_t regAddr, uint8_t length)
-                : OutboundPacket(regAddr, length, RECV_READ_HEADER_BYTE), length(length + sizeof(OutboundPacket)) { }
+                : OutboundPacket(regAddr, length, SEND_READ_HEADER_BYTE), length(length + sizeof(OutboundPacket)) { }
     };
 
     struct ReceivedRead {
