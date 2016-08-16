@@ -6,6 +6,7 @@
 #define BNO055_BNO055ENUM_H
 
 #include <cstring>
+#include <sstream>
 #include "UartInterface.h"
 
 #define BNO055_BAUD_RATE B115200
@@ -283,6 +284,14 @@ namespace bno055 {
         uint8_t* bytes() {
             return (uint8_t*) this;
         }
+        std::string toString() {
+            std::stringstream ss;
+            uint8_t* myBytes = bytes();
+            for (int i = 0; i < header.names.length; ++i) {
+                ss << (uint32_t)myBytes[i] << " ";
+            }
+            return ss.str();
+        }
     };
 
     struct RegisterWritePacket : public OutboundPacket {
@@ -323,8 +332,8 @@ namespace bno055 {
         bool isActuallyAnAck() {
             return response == RECV_ACK_HEADER_BYTE;
         }
-        uint8_t getAck() {
-            return length;
+        std::string getAck() {
+            return ackToString(length);
         }
     };
 
