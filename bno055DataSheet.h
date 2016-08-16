@@ -200,7 +200,7 @@ namespace bno055 {
         RECEIVE_CHARACTER_TIMEOUT,
     };
 
-    #define EMIT_CASE_ERROR_ENUM(e) case ##e: return #e
+    #define EMIT_CASE_ERROR_ENUM(e) case e: return #e
     static std::string ackToString(int err) {
         switch (err) {
             EMIT_CASE_ERROR_ENUM(WRITE_SUCCESS);
