@@ -74,9 +74,7 @@ namespace bno055 {
         return true;
     }
 
-    bool Bno055Interface::updateImuData(ImuData* out) {
-        RegisterReadPacket readRequestPacket(ACC_DATA_X_LSB, 46);
-        ReceivedRead dataReceived;
+    static bool pullData(RegisterReadPacket& readRequestPacket, ReceivedRead& dataReceived, UartInterface& uart) {
         int responseWait = RESPONSE_WAIT_READ; // microseconds
         int loopCounter = 0;
         do {
@@ -89,18 +87,42 @@ namespace bno055 {
             }
             int receivedExpected = dataReceived.readFrom(uart);
             if (receivedExpected == RECEIVED_EXPECTED) {
-//                std::cout << "Read request successful!\n";
                 break;
             } else if (receivedExpected == RECEIVED_ACK) {
                 std::cout << "Read request failed: " << dataReceived.getAck() << " request was: ";
                 std::cout << "\t" << readRequestPacket.toString() << std::endl;
-//                return false;
             } else {
                 std::cout << "# " << dataReceived.toString() << std::endl;
             }
         } while(true);
-//        ImuData* imuData = (ImuData*)&dataReceived.data;
-//        *out = *imuData;
+    }
+
+    bool Bno055Interface::updateImuData(ImuData* out) {
+        RegisterReadPacket readRequestPacket(ACC_DATA_X_LSB, 46);
+        ReceivedRead dataReceived;
+        pullData(readRequestPacket, dataReceived, uart);
+//        int responseWait = RESPONSE_WAIT_READ; // microseconds
+//        int loopCounter = 0;
+//        do {
+//            uart.sendData(readRequestPacket.bytes(), readRequestPacket.length);
+//            usleep(responseWait); // 2 ms
+//            // If stuck in this while loop for an entire second, print a message and reset counter.
+//            if (++loopCounter >= 1000000 / responseWait) {
+//                loopCounter = 0;
+//                std::cout << "Waiting for read response...\n";
+//            }
+//            int receivedExpected = dataReceived.readFrom(uart);
+//            if (receivedExpected == RECEIVED_EXPECTED) {
+////                std::cout << "Read request successful!\n";
+//                break;
+//            } else if (receivedExpected == RECEIVED_ACK) {
+//                std::cout << "Read request failed: " << dataReceived.getAck() << " request was: ";
+//                std::cout << "\t" << readRequestPacket.toString() << std::endl;
+////                return false;
+//            } else {
+//                std::cout << "# " << dataReceived.toString() << std::endl;
+//            }
+//        } while(true);
         *out = *(ImuData*)&dataReceived.data;
         return true;
     }
