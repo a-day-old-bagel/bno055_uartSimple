@@ -288,7 +288,7 @@ namespace bno055 {
             uint8_t* myBytes = bytes();
             int realLength = (header.names.readOrWrite == SEND_READ_HEADER_BYTE ? 4 : header.names.length);
             for (int i = 0; i < realLength; ++i) {
-                ss << (uint32_t)myBytes[i] << " ";
+                ss << std::hex << (uint32_t)myBytes[i] << " ";
             }
             return ss.str();
         }
@@ -343,7 +343,7 @@ namespace bno055 {
             uint8_t* myBytes = (uint8_t*)this;
             int realLength = 8;
             for (int i = 0; i < realLength; ++i) {
-                ss << (uint32_t)myBytes[i] << " ";
+                ss << std::hex << (uint32_t)myBytes[i] << " ";
             }
             return ss.str();
         }
