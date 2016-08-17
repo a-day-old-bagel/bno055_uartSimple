@@ -79,28 +79,32 @@ namespace bno055 {
         int loopCounter = 0;
         do {
             uart.sendData(readRequestPacket.bytes(), readRequestPacket.length);
-            usleep(responseWait); // 2 ms
+            usleep(responseWait);
             // If stuck in this while loop for an entire second, print a message and reset counter.
             if (++loopCounter >= 1000000 / responseWait) {
                 loopCounter = 0;
-                std::cout << "Waiting for read response...\n";
+                std::cout << "Read timed out!\n";
+                return false;
             }
             int receivedExpected = dataReceived.readFrom(uart);
             if (receivedExpected == RECEIVED_EXPECTED) {
                 break;
             } else if (receivedExpected == RECEIVED_ACK) {
-                std::cout << "Read request failed: " << dataReceived.getAck() << " request was: ";
+                std::cout << "Read request failed: " << dataReceived.getAck() << ": request was: ";
                 std::cout << "\t" << readRequestPacket.toString() << std::endl;
             } else {
-                std::cout << "# " << dataReceived.toString() << std::endl;
+                std::cout << "received unexpected: " << dataReceived.toString() << std::endl;
             }
         } while(true);
+        return true;
     }
 
     bool Bno055Interface::updateImuData(ImuData* out) {
         RegisterReadPacket readRequestPacket(ACC_DATA_X_LSB, 46);
         ReceivedRead dataReceived;
-        pullData(readRequestPacket, dataReceived, uart);
+        if (!pullData(readRequestPacket, dataReceived, uart)) {
+            return false;
+        }
         *out = *(ImuData*)&dataReceived.data;
         return true;
     }
@@ -108,7 +112,9 @@ namespace bno055 {
     bool Bno055Interface::updateOrientation(vec3* orient) {
         RegisterReadPacket readRequestPacket(EUL_Heading_LSB, 6);
         ReceivedRead dataReceived;
-        pullData(readRequestPacket, dataReceived, uart);
+        if (!pullData(readRequestPacket, dataReceived, uart)) {
+            return false;
+        }
         *orient = *(vec3*)&dataReceived.data;
         return true;
     }
