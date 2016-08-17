@@ -20,12 +20,17 @@ int main() {
         return 1;
     }
 
-    ImuData imuData;
-    while(bno055.updateImuData(&imuData)) {
-        std::cout << "-> " << imuData.names.orient.heading << " "
-                  << imuData.names.orient.roll << " "
-                  << imuData.names.orient.pitch << std::endl;
+    vec3 orient;
+    while(bno055.updateOrientation(&orient)) {
+        std::cout << "-> " << orient.heading << " " << orient.roll << " " << orient.pitch << std::endl;
     }
+
+//    ImuData imuData;
+//    while(bno055.updateImuData(&imuData)) {
+//        std::cout << "-> " << imuData.names.orient.heading << " "
+//                  << imuData.names.orient.roll << " "
+//                  << imuData.names.orient.pitch << std::endl;
+//    }
 
     std::cout << "Data gathering halted, exiting!\n";
 
