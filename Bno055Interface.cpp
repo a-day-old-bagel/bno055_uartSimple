@@ -92,7 +92,7 @@ namespace bno055 {
 //                std::cout << "Read request successful!\n";
                 break;
             } else if (receivedExpected == RECEIVED_ACK) {
-                std::cout << "Read request failed: " << dataReceived.getAck() << "request was: ";
+                std::cout << "Read request failed: " << dataReceived.getAck() << " request was: ";
                 std::cout << "\t" << readRequestPacket.toString() << std::endl;
 //                return false;
             } else {
