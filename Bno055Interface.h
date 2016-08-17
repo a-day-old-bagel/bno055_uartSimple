@@ -19,6 +19,7 @@ namespace bno055 {
         bool init(const char* bno055File);
         bool isLive();
         bool updateImuData(ImuData* out);
+        bool updateOrientation(vec3* orient);
     };
 }
 
