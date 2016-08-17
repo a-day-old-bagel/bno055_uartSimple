@@ -99,8 +99,9 @@ namespace bno055 {
                 std::cout << "# " << dataReceived.toString() << std::endl;
             }
         } while(true);
-        ImuData* imuData = (ImuData*)&dataReceived.data;
-        *out = *imuData;
+//        ImuData* imuData = (ImuData*)&dataReceived.data;
+//        *out = *imuData;
+        *out = *(ImuData*)&dataReceived.data;
         return true;
     }
 

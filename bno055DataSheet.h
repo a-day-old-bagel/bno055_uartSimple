@@ -227,31 +227,29 @@ namespace bno055 {
         RECEIVED_FAIL,
     };
 
+    struct vec3 {
+        union {
+            struct {
+                int16_t x, y, z;
+            };
+            struct {
+                int16_t heading, roll, pitch;
+            };
+        };
+    };
+    struct vec4 {
+        int16_t w, x, y, z;
+    };
     struct ImuData {
         union {
             struct {
-                int16_t accX;       //  0
-                int16_t accY;       //  1
-                int16_t accZ;       //  2
-                int16_t magX;       //  3
-                int16_t magY;       //  4
-                int16_t magZ;       //  5
-                int16_t gyrX;       //  6
-                int16_t gyrY;       //  7
-                int16_t gyrZ;       //  8
-                int16_t head;       //  9
-                int16_t roll;       // 10
-                int16_t pitc;       // 11
-                int16_t quaW;       // 12
-                int16_t quaX;       // 13
-                int16_t quaY;       // 14
-                int16_t quaZ;       // 15
-                int16_t linaccX;    // 16
-                int16_t linaccY;    // 17
-                int16_t linaccZ;    // 18
-                int16_t gravX;      // 19
-                int16_t gravY;      // 20
-                int16_t gravZ;      // 21
+                vec3 accel;
+                vec3 mag;
+                vec3 gyr;
+                vec3 orient;
+                vec4 quat;
+                vec3 linAccel;
+                vec3 grav;
             } names;
             uint16_t index[22];
         };
