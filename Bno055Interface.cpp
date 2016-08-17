@@ -74,6 +74,7 @@ namespace bno055 {
         return true;
     }
 
+    // TODO: data comes back wrong endian-ness !!!! WHY WOULD YOU DO THAT???!!!???
     static bool pullData(RegisterReadPacket& readRequestPacket, ReceivedRead& dataReceived, UartInterface& uart) {
         int responseWait = RESPONSE_WAIT_READ; // microseconds
         int loopCounter = 0;
