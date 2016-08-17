@@ -221,6 +221,7 @@ namespace bno055 {
 
     enum ReceptionStatus {
         RECEIVED_EXPECTED,
+        RECEIVED_WRONG_LENGTH,
         RECEIVED_ACK,
         RECEIVED_READ,
         RECEIVED_FAIL,
@@ -317,9 +318,12 @@ namespace bno055 {
         uint8_t data[BNO055_MAX_PACKET_DATA_LENGTH];
         int readFrom(UartInterface& uart) {
             int64_t bytesReceived = uart.recvData((uint8_t*)this, 2);
-            if (bytesReceived == 2 + length) {
-                if (isValidRead()) {
+            if (isValidRead() && bytesReceived == 2) {
+                bytesReceived = uart.recvData(&data[0], BNO055_MAX_PACKET_DATA_LENGTH);
+                if (bytesReceived == length) {
                     return RECEIVED_EXPECTED;
+                } else {
+                    return RECEIVED_WRONG_LENGTH;
                 }
             }
             if (isActuallyAnAck()) {
