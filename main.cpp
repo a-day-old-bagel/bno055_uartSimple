@@ -22,7 +22,7 @@ int main() {
 
     ImuData imuData;
     while(bno055.updateImuData(&imuData)) {
-        std::cout << imuData.names.accX << std::endl;
+        std::cout << "--->  " << imuData.names.head << imuData.names.roll << imuData.names.pitc << std::endl;
     }
 
     std::cout << "Data gathering halted, exiting!\n";
