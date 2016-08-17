@@ -95,6 +95,8 @@ namespace bno055 {
                 std::cout << "Read request failed: " << dataReceived.getAck() << std::endl;
                 std::cout << "\t" << readRequestPacket.toString() << std::endl;
 //                return false;
+            } else {
+                std::cout << "# " << dataReceived.toString() << std::endl;
             }
         } while(true);
         ImuData* imuData = (ImuData*)&dataReceived.data;

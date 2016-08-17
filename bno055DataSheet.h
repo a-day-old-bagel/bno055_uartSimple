@@ -336,6 +336,15 @@ namespace bno055 {
         std::string getAck() {
             return ackToString(length);
         }
+        std::string toString() {
+            std::stringstream ss;
+            uint8_t* myBytes = (uint8_t*)this;
+            int realLength = 8;
+            for (int i = 0; i < realLength; ++i) {
+                ss << (uint32_t)myBytes[i] << " ";
+            }
+            return ss.str();
+        }
     };
 
     struct ReceivedAck {
