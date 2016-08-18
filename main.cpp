@@ -32,6 +32,7 @@ int main() {
                   << std::setw(10) << std::setprecision(4) << orientDeg.roll
                   << std::setw(10) << std::setprecision(4) << orientDeg.pitch;
         std::cout << std::endl;
+        usleep(10);
     }
 
     std::cout << "Data gathering halted, exiting!\n";
