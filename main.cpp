@@ -25,8 +25,13 @@ int main() {
     vec3_f orientDeg;
     while(bno055.updateOrientation(&orient)) {
         orientDeg = orient.toFloatsDeg();
-        std::cout << "-> " << std::setw(10) << orientDeg.heading
-                  << std::setw(10) << orientDeg.roll << std::setw(10) << orientDeg.pitch << std::endl;
+        std::cout << "-> ";
+        std::cout << std::setiosflags(std::ios::right);
+        std::cout << std::setiosflags(std::ios::fixed);
+        std::cout << std::setw(8) << std::setprecision(4) << orientDeg.heading
+                  << std::setw(8) << std::setprecision(4) << orientDeg.roll
+                  << std::setw(8) << std::setprecision(4) << orientDeg.pitch;
+        std::cout << std::endl;
     }
 
 //    ImuData_16 imuData;
