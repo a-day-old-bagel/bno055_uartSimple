@@ -28,9 +28,9 @@ int main() {
         std::cout << "-> ";
         std::cout << std::setiosflags(std::ios::right);
         std::cout << std::setiosflags(std::ios::fixed);
-        std::cout << std::setw(8) << std::setprecision(4) << orientDeg.heading
-                  << std::setw(8) << std::setprecision(4) << orientDeg.roll
-                  << std::setw(8) << std::setprecision(4) << orientDeg.pitch;
+        std::cout << std::setw(10) << std::setprecision(4) << orientDeg.heading
+                  << std::setw(10) << std::setprecision(4) << orientDeg.roll
+                  << std::setw(10) << std::setprecision(4) << orientDeg.pitch;
         std::cout << std::endl;
     }
 
