@@ -227,6 +227,13 @@ namespace bno055 {
         RECEIVED_FAIL,
     };
 
+    static void switchEndianess16(void* begin, int howManyToSwitch) {
+        int16_t* begin16 = (int16_t*)begin;
+        for (int i = 0; i < howManyToSwitch; ++i) {
+            begin16[i] =  (begin16[i] << 8)  |
+                         ((begin16[i] >> 8)  & (int16_t)0x00ff);
+        }
+    }
     struct vec3 {
         union {
             struct {
@@ -235,10 +242,13 @@ namespace bno055 {
             struct {
                 int16_t heading, roll, pitch;
             };
+            int16_t index[3];
         };
+        void switchEndianess() { switchEndianess16(this, 3); }
     };
     struct vec4 {
         int16_t w, x, y, z;
+        void switchEndianess() { switchEndianess16(this, 4); }
     };
     struct ImuData {
         union {
@@ -255,6 +265,7 @@ namespace bno055 {
         };
         int8_t temperature;
         uint8_t calibration;
+        void switchEndianess() { switchEndianess16(this, 22); }
     };
 
     union OutboundPacketHeader {
@@ -288,7 +299,7 @@ namespace bno055 {
             uint8_t* myBytes = bytes();
             int realLength = (header.names.readOrWrite == SEND_READ_HEADER_BYTE ? 4 : header.names.length);
             for (int i = 0; i < realLength; ++i) {
-                ss << std::hex << (uint32_t)myBytes[i] << " ";
+                ss << "(0x) " << std::hex << (uint32_t)myBytes[i] << " ";
             }
             return ss.str();
         }
@@ -343,7 +354,7 @@ namespace bno055 {
             uint8_t* myBytes = (uint8_t*)this;
             int realLength = 8;
             for (int i = 0; i < realLength; ++i) {
-                ss << std::hex << (uint32_t)myBytes[i] << " ";
+                ss << "(0x) " << std::hex << (uint32_t)myBytes[i] << " ";
             }
             return ss.str();
         }

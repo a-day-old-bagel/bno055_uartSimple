@@ -22,6 +22,7 @@ int main() {
 
     vec3 orient;
     while(bno055.updateOrientation(&orient)) {
+        orient.switchEndianess();
         std::cout << "-> " << orient.heading << " " << orient.roll << " " << orient.pitch << std::endl;
     }
 
