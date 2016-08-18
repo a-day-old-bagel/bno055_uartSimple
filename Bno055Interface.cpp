@@ -13,45 +13,57 @@ namespace bno055 {
 
     bool Bno055Interface::init(const char* bno055File) {
 
-        #define REPORT_FAILURE(byteSent) std::cout << "Did not receive response after sending " byteSent "\n"; wasSuccess = false
+        #define TRY_SEND_BYTE(byteSent, value) \
+                if ( ! writeByte(byteSent, value) ) {\
+                std::cout << "Did not receive response after sending " #byteSent "\n";\
+                wasSuccess = false; }
+
         bool wasSuccess = true;
         if ( ! uart.openPort(bno055File, BNO055_BAUD_RATE) ) {
             std::cout << "Could not open serial connection to bno055!\n";
             wasSuccess = false;
         }
-        if ( ! writeByte(OPR_MODE, CONFIG) ) {
-            REPORT_FAILURE("OPR_MODE");
-            wasSuccess = false;
-        }
-        if ( ! writeByte(PWR_MODE, NORMAL) ) {
-            REPORT_FAILURE("PWR_MODE");
-            wasSuccess = false;
-        }
-        if ( ! writeByte(Page_ID, 0) ) {
-            REPORT_FAILURE("Page_ID");
-            wasSuccess = false;
-        }
-        if ( ! writeByte(SYS_TRIGGER, 0) ) {
-            REPORT_FAILURE("SYS_TRIGGER");
-            wasSuccess = false;
-        }
-        if ( ! writeByte(UNIT_SEL, 0x83) ) {
-            REPORT_FAILURE("UNIT_SEL");
-            wasSuccess = false;
-        }
-        if ( ! writeByte(AXIS_MAP_CONFIG, 0x24) ) {
-            REPORT_FAILURE("AXIS_MAP_CONFIG");
-            wasSuccess = false;
-        }
-        if ( ! writeByte(AXIS_MAP_SIGN, 0x06) ) {
-            REPORT_FAILURE("AXIS_MAP_SIGN");
-            wasSuccess = false;
-        }
-        if ( ! writeByte(OPR_MODE, NDOF) ) {
-            REPORT_FAILURE("OPR_MODE");
-            wasSuccess = false;
-        }
-        #undef REPORT_FAILURE
+        TRY_SEND_BYTE(OPR_MODE, CONFIG)
+        TRY_SEND_BYTE(PWR_MODE, NORMAL)
+        TRY_SEND_BYTE(Page_ID, 0)
+        TRY_SEND_BYTE(SYS_TRIGGER, 0)
+        TRY_SEND_BYTE(UNIT_SEL, 0x83)
+        TRY_SEND_BYTE(AXIS_MAP_CONFIG, 0x24)
+        TRY_SEND_BYTE(AXIS_MAP_SIGN, 0x06)
+        TRY_SEND_BYTE(OPR_MODE, NDOF)
+//        if ( ! writeByte(OPR_MODE, CONFIG) ) {
+//            REPORT_FAILURE("OPR_MODE");
+//            wasSuccess = false;
+//        }
+//        if ( ! writeByte(PWR_MODE, NORMAL) ) {
+//            REPORT_FAILURE("PWR_MODE");
+//            wasSuccess = false;
+//        }
+//        if ( ! writeByte(Page_ID, 0) ) {
+//            REPORT_FAILURE("Page_ID");
+//            wasSuccess = false;
+//        }
+//        if ( ! writeByte(SYS_TRIGGER, 0) ) {
+//            REPORT_FAILURE("SYS_TRIGGER");
+//            wasSuccess = false;
+//        }
+//        if ( ! writeByte(UNIT_SEL, 0x83) ) {
+//            REPORT_FAILURE("UNIT_SEL");
+//            wasSuccess = false;
+//        }
+//        if ( ! writeByte(AXIS_MAP_CONFIG, 0x24) ) {
+//            REPORT_FAILURE("AXIS_MAP_CONFIG");
+//            wasSuccess = false;
+//        }
+//        if ( ! writeByte(AXIS_MAP_SIGN, 0x06) ) {
+//            REPORT_FAILURE("AXIS_MAP_SIGN");
+//            wasSuccess = false;
+//        }
+//        if ( ! writeByte(OPR_MODE, NDOF) ) {
+//            REPORT_FAILURE("OPR_MODE");
+//            wasSuccess = false;
+//        }
+        #undef TRY_SEND_BYTE
 
         hasInit = wasSuccess;
         return wasSuccess;
