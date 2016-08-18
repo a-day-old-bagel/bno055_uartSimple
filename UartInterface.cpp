@@ -33,8 +33,7 @@ namespace bno055 {
          * 	When set and path identifies a terminal device, open() shall not cause the terminal device to become the
          * 	controlling terminal for the process.
          */
-        uartFile = open(deviceFile, O_RDWR | O_NOCTTY | O_SYNC);		//Open in synchronous mode
-//        uartFile = open(deviceFile, O_RDWR | O_NOCTTY | O_NONBLOCK);		//Open in asynchronous mode
+        uartFile = open(deviceFile, O_RDWR | O_NOCTTY | O_NONBLOCK);		//Open in asynchronous mode
         if (uartFile == -1) {
             return false;
         }

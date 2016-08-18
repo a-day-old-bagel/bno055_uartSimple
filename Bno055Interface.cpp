@@ -42,13 +42,9 @@ namespace bno055 {
         int loopCounter = 0;
         do {
             uart.sendData(packetToSend.bytes(), packetToSend.length);
-//            usleep(RESPONSE_WAIT_WRITE); // 2 ms
-//            if (++loopCounter >= 1000000 / RESPONSE_WAIT_WRITE) {
-//                std::cout << "Write timed out!\n";
-//                return false;
-//            }
-            if (++loopCounter >= 10) {
-                std::cout << "Read timed out!\n";
+            usleep(RESPONSE_WAIT_WRITE); // 2 ms
+            if (++loopCounter >= 1000000 / RESPONSE_WAIT_WRITE) {
+                std::cout << "Write timed out!\n";
                 return false;
             }
         } while (ack.readFrom(uart) != RECEIVED_EXPECTED || ack.isErrorStatus());
@@ -59,13 +55,8 @@ namespace bno055 {
         int loopCounter = 0;
         do {
             uart.sendData(readRequestPacket.bytes(), readRequestPacket.length);
-//            usleep(RESPONSE_WAIT_READ);
-//            if (++loopCounter >= 1000000 / RESPONSE_WAIT_READ) {
-//                std::cout << "Read timed out!\n";
-//                return false;
-//            }
-//            usleep(RESPONSE_WAIT_READ);
-            if (++loopCounter >= 10) {
+            usleep(RESPONSE_WAIT_READ);
+            if (++loopCounter >= 1000000 / RESPONSE_WAIT_READ) {
                 std::cout << "Read timed out!\n";
                 return false;
             }
