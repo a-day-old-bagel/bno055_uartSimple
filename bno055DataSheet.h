@@ -227,6 +227,42 @@ namespace bno055 {
         RECEIVED_FAIL,
     };
 
+    struct vec3_f {
+        union {
+            struct {
+                float x, y, z;
+            };
+            struct {
+                float heading, roll, pitch;
+            };
+            float index[3];
+        };
+    };
+    struct vec4_f {
+        union {
+            struct {
+                float w, x, y, z;
+            };
+            float index[4];
+        };
+    };
+    struct ImuData_f {
+        union {
+            struct {
+                vec3_f accel;
+                vec3_f mag;
+                vec3_f gyr;
+                vec3_f orient;
+                vec4_f quat;
+                vec3_f linAccel;
+                vec3_f grav;
+            } names;
+            float index[22];
+        };
+        int8_t temperature;
+        uint8_t calibration;
+    };
+
     static void switchEndianess16(void* begin, int howManyToSwitch) {
         int16_t* begin16 = (int16_t*)begin;
         for (int i = 0; i < howManyToSwitch; ++i) {
@@ -234,7 +270,7 @@ namespace bno055 {
                          ((begin16[i] >> 8)  & (int16_t)0x00ff);
         }
     }
-    struct vec3 {
+    struct vec3_16 {
         union {
             struct {
                 int16_t x, y, z;
@@ -245,27 +281,60 @@ namespace bno055 {
             int16_t index[3];
         };
         void switchEndianess() { switchEndianess16(this, 3); }
+        vec3_f toFloats() {
+            vec3_f result {};
+            for (int i = 0; i < 3; ++i) {
+                result.index[i] = (float)index[i];
+            }
+            return result;
+        }
+        vec3_f toFloatsDeg() {
+            vec3_f result {};
+            for (int i = 0; i < 3; ++i) {
+                result.index[i] = (float)index[i] / 16.f;
+            }
+            return result;
+        }
     };
-    struct vec4 {
-        int16_t w, x, y, z;
-        void switchEndianess() { switchEndianess16(this, 4); }
-    };
-    struct ImuData {
+    struct vec4_16 {
         union {
             struct {
-                vec3 accel;
-                vec3 mag;
-                vec3 gyr;
-                vec3 orient;
-                vec4 quat;
-                vec3 linAccel;
-                vec3 grav;
+                int16_t w, x, y, z;
+            };
+            int16_t index[3];
+        };
+        void switchEndianess() { switchEndianess16(this, 4); }
+        vec4_f toFloats() {
+            vec4_f result {};
+            for (int i = 0; i < 4; ++i) {
+                result.index[i] = (float)index[i];
+            }
+            return result;
+        }
+    };
+    struct ImuData_16 {
+        union {
+            struct {
+                vec3_16 accel;
+                vec3_16 mag;
+                vec3_16 gyr;
+                vec3_16 orient;
+                vec4_16 quat;
+                vec3_16 linAccel;
+                vec3_16 grav;
             } names;
             uint16_t index[22];
         };
         int8_t temperature;
         uint8_t calibration;
         void switchEndianess() { switchEndianess16(this, 22); }
+        ImuData_f toFloats() {
+            ImuData_f result {};
+            for (int i = 0; i < 22; ++i) {
+                result.index[i] = (float)index[i];
+            }
+            return result;
+        }
     };
 
     union OutboundPacketHeader {
@@ -296,10 +365,11 @@ namespace bno055 {
         }
         std::string toString() {
             std::stringstream ss;
+            ss << "(0x) ";
             uint8_t* myBytes = bytes();
             int realLength = (header.names.readOrWrite == SEND_READ_HEADER_BYTE ? 4 : header.names.length);
             for (int i = 0; i < realLength; ++i) {
-                ss << "(0x) " << std::hex << (uint32_t)myBytes[i] << " ";
+                ss << std::hex << (uint32_t)myBytes[i] << " ";
             }
             return ss.str();
         }
@@ -351,10 +421,11 @@ namespace bno055 {
         }
         std::string toString() {
             std::stringstream ss;
+            ss << "(0x) ";
             uint8_t* myBytes = (uint8_t*)this;
             int realLength = 8;
             for (int i = 0; i < realLength; ++i) {
-                ss << "(0x) " << std::hex << (uint32_t)myBytes[i] << " ";
+                ss << std::hex << (uint32_t)myBytes[i] << " ";
             }
             return ss.str();
         }

@@ -20,13 +20,14 @@ int main() {
         return 1;
     }
 
-    vec3 orient;
+    vec3_16 orient;
+    vec3_f orientDeg;
     while(bno055.updateOrientation(&orient)) {
-//        orient.switchEndianess();
-        std::cout << "-> " << orient.heading << " " << orient.roll << " " << orient.pitch << std::endl;
+        orientDeg = orient.toFloatsDeg();
+        std::cout << "-> " << orientDeg.heading << " " << orientDeg.roll << " " << orientDeg.pitch << std::endl;
     }
 
-//    ImuData imuData;
+//    ImuData_16 imuData;
 //    while(bno055.updateImuData(&imuData)) {
 //        std::cout << "-> " << imuData.names.orient.heading << " "
 //                  << imuData.names.orient.roll << " "

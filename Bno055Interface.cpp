@@ -100,23 +100,23 @@ namespace bno055 {
         return true;
     }
 
-    bool Bno055Interface::updateImuData(ImuData* out) {
+    bool Bno055Interface::updateImuData(ImuData_16* out) {
         RegisterReadPacket readRequestPacket(ACC_DATA_X_LSB, 46);
         ReceivedRead dataReceived;
         if (!pullData(readRequestPacket, dataReceived, uart)) {
             return false;
         }
-        *out = *(ImuData*)&dataReceived.data;
+        *out = *(ImuData_16*)&dataReceived.data;
         return true;
     }
 
-    bool Bno055Interface::updateOrientation(vec3* orient) {
+    bool Bno055Interface::updateOrientation(vec3_16* orient) {
         RegisterReadPacket readRequestPacket(EUL_Heading_LSB, 6);
         ReceivedRead dataReceived;
         if (!pullData(readRequestPacket, dataReceived, uart)) {
             return false;
         }
-        *orient = *(vec3*)&dataReceived.data;
+        *orient = *(vec3_16*)&dataReceived.data;
         return true;
     }
 
