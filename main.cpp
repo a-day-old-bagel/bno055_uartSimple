@@ -21,10 +21,10 @@ int main() {
         return 1;
     }
 
-    vec3_16 orient;
-    vec3_f orientDeg;
-    while(bno055.updateOrientation(&orient)) {
-        orientDeg = orient.toFloatsDeg();
+    Vec3_16 orient;
+    Vec3_f orientDeg;
+    while(bno055.queryVec3(&orient, EULER_ORIENT)) {
+        orientDeg = orient.toFusionEulerOrientation();
         std::cout << "-> ";
         std::cout << std::setiosflags(std::ios::right);
         std::cout << std::setiosflags(std::ios::fixed);

@@ -25,7 +25,7 @@ set( SOURCE_FILES ${SOURCE_FILES}
         main.cpp
         UartInterface.cpp
         UartInterface.h
-        )
+        bno055DataStructures.cpp bno055DataStructures.h)
 
 # Build
 include_directories( ${INCLUDE_DIRS} )

@@ -13,16 +13,15 @@ namespace bno055 {
 
     bool Bno055Interface::init(const char* bno055File) {
 
-        #define TRY_SEND_BYTE(byteSent, value) \
-                if ( ! writeByte(byteSent, value) ) {\
-                std::cout << "Did not receive response after sending " #byteSent "\n";\
-                wasSuccess = false; }
-
         bool wasSuccess = true;
         if ( ! uart.openPort(bno055File, BNO055_BAUD_RATE) ) {
             std::cout << "Could not open serial connection to bno055!\n";
             wasSuccess = false;
         }
+        #define TRY_SEND_BYTE(byteSent, value) \
+                if ( ! writeByte(byteSent, value) ) {\
+                std::cout << "Did not receive response after sending " #byteSent "\n";\
+                wasSuccess = false; }
         TRY_SEND_BYTE(OPR_MODE, CONFIG)
         TRY_SEND_BYTE(PWR_MODE, NORMAL)
         TRY_SEND_BYTE(Page_ID, 0)
@@ -31,38 +30,6 @@ namespace bno055 {
         TRY_SEND_BYTE(AXIS_MAP_CONFIG, 0x24)
         TRY_SEND_BYTE(AXIS_MAP_SIGN, 0x06)
         TRY_SEND_BYTE(OPR_MODE, NDOF)
-//        if ( ! writeByte(OPR_MODE, CONFIG) ) {
-//            REPORT_FAILURE("OPR_MODE");
-//            wasSuccess = false;
-//        }
-//        if ( ! writeByte(PWR_MODE, NORMAL) ) {
-//            REPORT_FAILURE("PWR_MODE");
-//            wasSuccess = false;
-//        }
-//        if ( ! writeByte(Page_ID, 0) ) {
-//            REPORT_FAILURE("Page_ID");
-//            wasSuccess = false;
-//        }
-//        if ( ! writeByte(SYS_TRIGGER, 0) ) {
-//            REPORT_FAILURE("SYS_TRIGGER");
-//            wasSuccess = false;
-//        }
-//        if ( ! writeByte(UNIT_SEL, 0x83) ) {
-//            REPORT_FAILURE("UNIT_SEL");
-//            wasSuccess = false;
-//        }
-//        if ( ! writeByte(AXIS_MAP_CONFIG, 0x24) ) {
-//            REPORT_FAILURE("AXIS_MAP_CONFIG");
-//            wasSuccess = false;
-//        }
-//        if ( ! writeByte(AXIS_MAP_SIGN, 0x06) ) {
-//            REPORT_FAILURE("AXIS_MAP_SIGN");
-//            wasSuccess = false;
-//        }
-//        if ( ! writeByte(OPR_MODE, NDOF) ) {
-//            REPORT_FAILURE("OPR_MODE");
-//            wasSuccess = false;
-//        }
         #undef TRY_SEND_BYTE
 
         hasInit = wasSuccess;
@@ -72,30 +39,24 @@ namespace bno055 {
     bool Bno055Interface::write(uint8_t regAddr, uint8_t length, uint8_t* data) {
         RegisterWritePacket packetToSend(regAddr, length, data);
         ReceivedAck ack;
-        int responseWait = RESPONSE_WAIT_WRITE; // microseconds
         int loopCounter = 0;
         do {
             uart.sendData(packetToSend.bytes(), packetToSend.length);
-            usleep(responseWait); // 2 ms
-            // If stuck in this while loop for an entire second, print a message and reset counter.
-            if (++loopCounter >= 1000000 / responseWait) {
-                loopCounter = 0;
-                std::cout << "Waiting for write response...";
+            usleep(RESPONSE_WAIT_WRITE); // 2 ms
+            if (++loopCounter >= 1000000 / RESPONSE_WAIT_WRITE) {
+                std::cout << "Write timed out!\n";
+                return false;
             }
         } while (ack.readFrom(uart) != RECEIVED_EXPECTED || ack.isErrorStatus());
         return true;
     }
 
-    // TODO: data comes back wrong endian-ness !!!! WHY WOULD YOU DO THAT???!!!???
     static bool pullData(RegisterReadPacket& readRequestPacket, ReceivedRead& dataReceived, UartInterface& uart) {
-        int responseWait = RESPONSE_WAIT_READ; // microseconds
         int loopCounter = 0;
         do {
             uart.sendData(readRequestPacket.bytes(), readRequestPacket.length);
-            usleep(responseWait);
-            // If stuck in this while loop for an entire second, print a message and reset counter.
-            if (++loopCounter >= 1000000 / responseWait) {
-                loopCounter = 0;
+            usleep(RESPONSE_WAIT_READ);
+            if (++loopCounter >= 1000000 / RESPONSE_WAIT_READ) {
                 std::cout << "Read timed out!\n";
                 return false;
             }
@@ -112,7 +73,7 @@ namespace bno055 {
         return true;
     }
 
-    bool Bno055Interface::updateImuData(ImuData_16* out) {
+    bool Bno055Interface::queryImuData(ImuData_16* out) {
         RegisterReadPacket readRequestPacket(ACC_DATA_X_LSB, 46);
         ReceivedRead dataReceived;
         if (!pullData(readRequestPacket, dataReceived, uart)) {
@@ -122,13 +83,23 @@ namespace bno055 {
         return true;
     }
 
-    bool Bno055Interface::updateOrientation(vec3_16* orient) {
-        RegisterReadPacket readRequestPacket(EUL_Heading_LSB, 6);
+    bool Bno055Interface::queryVec3(Vec3_16* vec3Out, availableVec3sToQuery regBegin) {
+        RegisterReadPacket readRequestPacket(regBegin, 6);
         ReceivedRead dataReceived;
         if (!pullData(readRequestPacket, dataReceived, uart)) {
             return false;
         }
-        *orient = *(vec3_16*)&dataReceived.data;
+        *vec3Out = *(Vec3_16*)&dataReceived.data;
+        return true;
+    }
+
+    bool Bno055Interface::queryVec4(Vec4_16* vec4Out, availableVec4sToQuery regBegin) {
+        RegisterReadPacket readRequestPacket(regBegin, 8);
+        ReceivedRead dataReceived;
+        if (!pullData(readRequestPacket, dataReceived, uart)) {
+            return false;
+        }
+        *vec4Out = *(Vec4_16*)&dataReceived.data;
         return true;
     }
 
