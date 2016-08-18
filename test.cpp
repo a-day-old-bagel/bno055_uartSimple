@@ -20,6 +20,8 @@ int main() {
         std::cout << "Could not contact BNO055!\n";
         return 1;
     }
+    std::cout << "Testing absolute orientation...\n";
+    usleep(1000000);
 
     Vec3_16 orient;
     Vec3_f orientDeg;
@@ -32,7 +34,6 @@ int main() {
                   << std::setw(10) << std::setprecision(4) << orientDeg.roll
                   << std::setw(10) << std::setprecision(4) << orientDeg.pitch;
         std::cout << std::endl;
-        usleep(10);
     }
 
     std::cout << "Data gathering halted, exiting!\n";

@@ -9,6 +9,8 @@ cmake_minimum_required( VERSION 3.3 )
 # Assign a project name
 project( BNO055 )
 
+option( BNO055_COMPILE_TEST "Use included main to test bno055" ON)
+
 if( NOT WIN32 )
     # these are the compiler flags to be used on gcc
     set( CMAKE_CXX_FLAGS_DEBUG           "${CMAKE_CXX_FLAGS} -ggdb3     -Wall -std=c++11         " )
@@ -20,12 +22,17 @@ set( LIBS         ${LIBS}         )
 set( INCLUDE_DIRS ${INCLUDE_DIRS} )
 set( SOURCE_FILES ${SOURCE_FILES}
         bno055DataSheet.h
+        bno055DataStructures.cpp
+        bno055DataStructures.h
         Bno055Interface.cpp
         Bno055Interface.h
-        main.cpp
         UartInterface.cpp
         UartInterface.h
-        bno055DataStructures.cpp bno055DataStructures.h)
+        )
+
+if ( BNO055_COMPILE_TEST )
+    set( SOURCE_FILES ${SOURCE_FILES} test.cpp )
+endif( BNO055_COMPILE_TEST )
 
 # Build
 include_directories( ${INCLUDE_DIRS} )
