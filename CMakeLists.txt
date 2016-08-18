@@ -9,7 +9,7 @@ cmake_minimum_required( VERSION 3.3 )
 # Assign a project name
 project( BNO055 )
 
-option( BNO055_COMPILE_TEST "Use included main to test bno055" ON)
+option( BNO055_COMPILE_STANDALONE "Use included main to test bno055" ON)
 
 if( NOT WIN32 )
     # these are the compiler flags to be used on gcc
@@ -30,11 +30,13 @@ set( SOURCE_FILES ${SOURCE_FILES}
         UartInterface.h
         )
 
-if ( BNO055_COMPILE_TEST )
-    set( SOURCE_FILES ${SOURCE_FILES} test.cpp )
-endif( BNO055_COMPILE_TEST )
-
-# Build
 include_directories( ${INCLUDE_DIRS} )
-add_executable( ${PROJECT_NAME} ${SOURCE_FILES} )
-target_link_libraries( ${PROJECT_NAME} ${LIBS} )
+if ( BNO055_COMPILE_STANDALONE )
+    set( SOURCE_FILES ${SOURCE_FILES} test.cpp )
+    add_executable( ${PROJECT_NAME} ${SOURCE_FILES} )
+    target_link_libraries( ${PROJECT_NAME} ${LIBS} )
+else( BNO055_COMPILE_STANDALONE )
+    add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES} )
+    target_link_libraries( ${PROJECT_NAME} ${LIBS} )
+    target_include_directories( ${PROJECT_NAME} ${INCLUDE_DIRS} )
+endif( BNO055_COMPILE_STANDALONE )
