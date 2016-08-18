@@ -3,6 +3,7 @@
 //
 
 #include <iostream>
+#include <iomanip>
 #include "Bno055Interface.h"
 #include "bno055DataSheet.h"
 
@@ -24,7 +25,8 @@ int main() {
     vec3_f orientDeg;
     while(bno055.updateOrientation(&orient)) {
         orientDeg = orient.toFloatsDeg();
-        std::cout << "-> " << orientDeg.heading << " " << orientDeg.roll << " " << orientDeg.pitch << std::endl;
+        std::cout << "-> " << std::setw(10) << orientDeg.heading
+                  << std::setw(10) << orientDeg.roll << std::setw(10) << orientDeg.pitch << std::endl;
     }
 
 //    ImuData_16 imuData;
