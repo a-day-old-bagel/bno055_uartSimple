@@ -57,7 +57,7 @@ namespace bno055 {
          */
         struct termios options;
         tcgetattr(uartFile, &options);
-        options.c_cflag = baudRate | CS8 | CLOCAL | CREAD;		//<Set baud rate
+        options.c_cflag = baudRate | CS8 | CLOCAL | CREAD | CSTOPB;		//<Set baud rate
         options.c_iflag = IGNPAR;
         options.c_oflag = 0;
         options.c_lflag = 0;
