@@ -66,6 +66,8 @@ namespace bno055 {
             } else if (receivedExpected == RECEIVED_ACK) {
                 std::cout << "Read request failed: " << dataReceived.getAck() << ": request was: ";
                 std::cout << readRequestPacket.toString() << std::endl;
+            } else if (receivedExpected == RECEIVED_WRONG_LENGTH) {
+                std::cout << "received wrong length." << std::endl;
             } else {
                 std::cout << "received unexpected: " << dataReceived.toString() << std::endl;
             }
