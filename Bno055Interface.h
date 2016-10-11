@@ -34,6 +34,7 @@ namespace bno055 {
         bool queryImuData(ImuData_16* out);
         bool queryVec3(Vec3_16* vec3Out, availableVec3sToQuery regBegin);
         bool queryVec4(Vec4_16* vec4Out, availableVec4sToQuery regBegin);
+        bool queryChunk_16(int16_t* out, int start, size_t length);
     };
 }
 

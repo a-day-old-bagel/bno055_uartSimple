@@ -105,6 +105,20 @@ namespace bno055 {
         return true;
     }
 
+    bool Bno055Interface::queryChunk_16(int16_t *out, int start, size_t length) {
+        RegisterReadPacket readRequestPacket((uint8_t) start, (uint8_t)length);
+        ReceivedRead dataReceived;
+        if (!pullData(readRequestPacket, dataReceived, uart)) {
+            return false;
+        }
+        int16_t* data_16 = (int16_t*) dataReceived.data;
+        for (int i = 0; i < length / 2; ++i) {
+            out[i] = data_16[i];
+        }
+        *out = *(int16_t*)&dataReceived.data;
+        return true;
+    }
+
     bool Bno055Interface::writeByte(uint8_t regAddr, uint8_t data) {
         return write(regAddr, 1, &data);
     }
