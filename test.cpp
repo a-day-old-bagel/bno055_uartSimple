@@ -2,6 +2,7 @@
 // Created by volundr on 7/19/16.
 //
 
+#include <vector>
 #include <iostream>
 #include <iomanip>
 #include "Bno055Interface.h"
@@ -23,16 +24,14 @@ int main() {
     std::cout << "Testing absolute orientation...\n";
     usleep(1000000);
 
-    Vec3_16 orient;
-    Vec3_f orientDeg;
-    while(bno055.queryVec3(&orient, EULER_ORIENT)) {
-        orientDeg = orient.toFusionEulerOrientation();
-        std::cout << "-> ";
+    std::vector<int16_t> dataRecieved(10);
+    while(bno055.queryChunk_16(dataRecieved.data(), QUA_Data_w_LSB, 20)) {
+        std::cout << "GRAVITY -> ";
         std::cout << std::setiosflags(std::ios::right);
         std::cout << std::setiosflags(std::ios::fixed);
-        std::cout << std::setw(10) << std::setprecision(4) << orientDeg.heading
-                  << std::setw(10) << std::setprecision(4) << orientDeg.roll
-                  << std::setw(10) << std::setprecision(4) << orientDeg.pitch;
+        std::cout << std::setw(10) << std::setprecision(4) <<  dataRecieved[7]
+                  << std::setw(10) << std::setprecision(4) <<  dataRecieved[8]
+                  << std::setw(10) << std::setprecision(4) <<  dataRecieved[9];
         std::cout << std::endl;
     }
 
